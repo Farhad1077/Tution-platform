@@ -27,6 +27,24 @@ input,select,textarea{width:100%;padding:12px;border:1px solid var(--line);borde
 footer{padding:35px 0;background:#171b2a;color:#fff;margin-top:40px}
 @media(max-width:850px){.hero-grid,.grid{grid-template-columns:1fr 1fr}.dash{grid-template-columns:1fr 1fr}.action-grid{grid-template-columns:1fr 1fr}.hero h1{font-size:36px}}
 @media(max-width:560px){.nav{height:auto;padding:12px 0;align-items:flex-start}.navlinks{display:none}.hero-grid,.grid,.dash,.action-grid{grid-template-columns:1fr}.hero{padding:35px 0}.hero h1{font-size:32px}.card{padding:17px}}
+
+/* Enhanced Admin Panel (front-end demo only) */
+.admin-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.admin-head p{margin:6px 0;color:var(--muted)}
+.admin-tools{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+.admin-tools input{max-width:360px;margin:0;background:#fff}
+.admin-badge{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border-radius:999px;background:#fff7e6;color:#8a5300;font-size:12px;font-weight:800;border:1px solid #ffe2a8}
+.admin-shortcuts{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}
+.admin-shortcut{border:1px solid var(--line);background:#fff;border-radius:16px;padding:15px;text-align:left;cursor:pointer;font:inherit}
+.admin-shortcut strong{display:block;margin-top:8px}
+.admin-shortcut:hover,.action:hover{border-color:var(--brand2);transform:translateY(-1px)}
+.admin-table-wrap{overflow-x:auto;border-radius:16px;margin-top:14px}
+.admin-section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.admin-section-title .btn{margin:3px}
+.demo-warning{background:#fff8e8;border:1px solid #f5d58b;color:#754900;border-radius:14px;padding:13px 15px;line-height:1.55}
+@media(max-width:700px){.admin-shortcuts{grid-template-columns:1fr 1fr}.admin-tools input{max-width:none}.admin-table-wrap table{min-width:650px}}
+@media(max-width:420px){.admin-shortcuts{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -91,8 +109,28 @@ footer{padding:35px 0;background:#171b2a;color:#fff;margin-top:40px}
 <section id="teacher" class="panel"><div class="wrap"><h2>👩‍🏫 Teacher Dashboard</h2><div class="dash"><div class="metric">Today’s Class<b>3</b></div><div class="metric">Students<b>84</b></div><div class="metric">Homework<b>12</b></div><div class="metric">Questions<b>7</b></div></div><div class="card" style="margin-top:18px"><h3>Today’s Schedule</h3><table><tr><th>Time</th><th>Class</th><th>Action</th></tr><tr><td>5:00 PM</td><td>Class 3 Math</td><td><button class="btn primary">Join</button></td></tr><tr><td>7:00 PM</td><td>Class 5 English</td><td><button class="btn primary">Join</button></td></tr></table></div></div></section>
 
 <section id="admin" class="panel"><div class="wrap">
-<h2>⚙️ ShikkhaNest Admin Panel</h2>
-<div class="notice">Demo Admin Panel / ডেমো অ্যাডমিন প্যানেল — UI ready. Real users, database, authentication and payment require backend integration.</div>
+<div class="admin-head">
+  <div>
+    <span class="pill">ADMIN WORKSPACE</span>
+    <h2 style="margin:12px 0 0">⚙️ ShikkhaNest Admin Panel</h2>
+    <p>ওয়েবসাইটের শিক্ষার্থী, কোর্স ও কনটেন্ট পরিচালনার ডেমো ড্যাশবোর্ড।</p>
+  </div>
+  <span class="admin-badge">● DEMO MODE — real data নয়</span>
+</div>
+<div class="demo-warning"><b>গুরুত্বপূর্ণ:</b> এটি এখনো front-end demo। এখানে দেখানো নাম, সংখ্যা ও পেমেন্টের তথ্য নমুনা। নিরাপদ Admin Login, বাস্তব Database এবং Payment verification চালু করার আগে Backend যুক্ত করতে হবে।</div>
+
+<div class="admin-tools">
+  <input id="adminSearch" type="search" placeholder="🔎 বর্তমান তালিকায় খুঁজুন..." oninput="filterAdminRows()" aria-label="Search admin table">
+  <button class="btn" onclick="exportAdminTable()">⬇️ Export CSV</button>
+  <button class="btn ghost" onclick="resetAdminSearch()">Reset</button>
+</div>
+
+<div class="admin-shortcuts">
+  <button class="admin-shortcut" onclick="adminTab('students')">👦<strong>Students</strong><small class="muted">শিক্ষার্থী পরিচালনা</small></button>
+  <button class="admin-shortcut" onclick="adminTab('teachers')">👩‍🏫<strong>Teachers</strong><small class="muted">শিক্ষক পরিচালনা</small></button>
+  <button class="admin-shortcut" onclick="adminTab('courses')">📚<strong>Courses</strong><small class="muted">কোর্স পরিচালনা</small></button>
+  <button class="admin-shortcut" onclick="adminTab('payments')">💳<strong>Payments</strong><small class="muted">পেমেন্টের ডেমো তালিকা</small></button>
+</div>
 
 <div class="dash">
 <div class="metric">👦 Students<b id="aStudents">1,248</b></div>
@@ -122,42 +160,42 @@ footer{padding:35px 0;background:#171b2a;color:#fff;margin-top:40px}
 <tr><td>Pending Teacher Applications</td><td><span class="tag">5 Pending</span></td><td><button class="btn" onclick="adminTab('teachers')">Review</button></td></tr>
 <tr><td>Pending Payments</td><td><span class="tag">3 Pending</span></td><td><button class="btn" onclick="adminTab('payments')">Open</button></td></tr>
 <tr><td>New Enrollments Today</td><td>24</td><td><button class="btn" onclick="adminTab('enrollments')">View</button></td></tr>
-<tr><td>Published Courses</td><td>15</td><td><button class="btn" onclick="adminTab('courses')">Manage</button></td></tr></table>
+<tr><td>Published Courses</td><td>15</td><td><button class="btn" onclick="adminTab('courses')">Manage</button></td></tr></table></div>
 </div>
 
 <div id="adminStudents" class="card" style="display:none;margin-top:22px">
 <h3>👦 Student Management</h3>
 <button class="btn primary" onclick="adminAdd('student')">+ Add Student</button>
-<table style="margin-top:14px"><tr><th>Name</th><th>Class</th><th>Parent</th><th>Status</th><th>Action</th></tr>
+<div class="admin-table-wrap"><table style="margin-top:14px"><tr><th>Name</th><th>Class</th><th>Parent</th><th>Status</th><th>Action</th></tr>
 <tr><td>Arif Hasan</td><td>3</td><td>Rahim Hasan</td><td>Active</td><td><button class="btn" onclick="alert('Student profile opened')">View</button></td></tr>
 <tr><td>Sumaiya Islam</td><td>5</td><td>Nusrat Islam</td><td>Active</td><td><button class="btn" onclick="alert('Student profile opened')">View</button></td></tr>
-<tr><td>Rafi Ahmed</td><td>2</td><td>Imran Ahmed</td><td>Pending</td><td><button class="btn primary" onclick="alert('Student approved')">Approve</button></td></tr></table>
+<tr><td>Rafi Ahmed</td><td>2</td><td>Imran Ahmed</td><td>Pending</td><td><button class="btn primary" onclick="alert('Student approved')">Approve</button></td></tr></table></div>
 </div>
 
 <div id="adminParents" class="card" style="display:none;margin-top:22px">
 <h3>👨‍👩‍👧 Parent Management</h3>
 <button class="btn primary" onclick="adminAdd('parent')">+ Add Parent</button>
-<table style="margin-top:14px"><tr><th>Name</th><th>Phone</th><th>Children</th><th>Status</th><th>Action</th></tr>
+<div class="admin-table-wrap"><table style="margin-top:14px"><tr><th>Name</th><th>Phone</th><th>Children</th><th>Status</th><th>Action</th></tr>
 <tr><td>Rahim Hasan</td><td>017XXXXXXXX</td><td>1</td><td>Verified</td><td><button class="btn">View</button></td></tr>
-<tr><td>Nusrat Islam</td><td>018XXXXXXXX</td><td>2</td><td>Verified</td><td><button class="btn">View</button></td></tr></table>
+<tr><td>Nusrat Islam</td><td>018XXXXXXXX</td><td>2</td><td>Verified</td><td><button class="btn">View</button></td></tr></table></div>
 </div>
 
 <div id="adminTeachers" class="card" style="display:none;margin-top:22px">
 <h3>👩‍🏫 Teacher Management & Approval</h3>
 <button class="btn primary" onclick="adminAdd('teacher')">+ Add Teacher</button>
-<table style="margin-top:14px"><tr><th>Teacher</th><th>Subject</th><th>Application</th><th>Status</th><th>Action</th></tr>
+<div class="admin-table-wrap"><table style="margin-top:14px"><tr><th>Teacher</th><th>Subject</th><th>Application</th><th>Status</th><th>Action</th></tr>
 <tr><td>Ms. Sadia</td><td>English</td><td>APP-1021</td><td><span class="tag">Pending</span></td><td><button class="btn primary" onclick="teacherApprove(this)">Approve</button></td></tr>
 <tr><td>Mr. Tanvir</td><td>Math</td><td>APP-1018</td><td>Approved</td><td><button class="btn">View</button></td></tr>
-<tr><td>Ms. Mitu</td><td>Bangla</td><td>APP-1016</td><td>Demo Required</td><td><button class="btn" onclick="alert('Demo class scheduled')">Schedule Demo</button></td></tr></table>
+<tr><td>Ms. Mitu</td><td>Bangla</td><td>APP-1016</td><td>Demo Required</td><td><button class="btn" onclick="alert('Demo class scheduled')">Schedule Demo</button></td></tr></table></div>
 </div>
 
 <div id="adminCourses" class="card" style="display:none;margin-top:22px">
 <h3>📚 Course Management</h3>
 <button class="btn primary" onclick="adminAdd('course')">+ Create Course</button>
-<table style="margin-top:14px"><tr><th>Course</th><th>Class</th><th>Price</th><th>Status</th><th>Action</th></tr>
+<div class="admin-table-wrap"><table style="margin-top:14px"><tr><th>Course</th><th>Class</th><th>Price</th><th>Status</th><th>Action</th></tr>
 <tr><td>Class 1 Complete</td><td>1</td><td>৳799</td><td>Published</td><td><button class="btn" onclick="alert('Course editor opened')">Edit</button></td></tr>
 <tr><td>Class 5 Complete</td><td>5</td><td>৳1,099</td><td>Published</td><td><button class="btn" onclick="alert('Course editor opened')">Edit</button></td></tr>
-<tr><td>Math Special Batch</td><td>4–5</td><td>৳599</td><td>Draft</td><td><button class="btn primary" onclick="alert('Course published')">Publish</button></td></tr></table>
+<tr><td>Math Special Batch</td><td>4–5</td><td>৳599</td><td>Draft</td><td><button class="btn primary" onclick="alert('Course published')">Publish</button></td></tr></table></div>
 </div>
 
 <div id="adminPayments" class="card" style="display:none;margin-top:22px">
@@ -165,14 +203,14 @@ footer{padding:35px 0;background:#171b2a;color:#fff;margin-top:40px}
 <table><tr><th>Order ID</th><th>Student</th><th>Amount</th><th>Gateway</th><th>Status</th></tr>
 <tr><td>SN-10025</td><td>Arif Hasan</td><td>৳799</td><td>SSLCOMMERZ</td><td><span class="tag">PAID</span></td></tr>
 <tr><td>SN-10024</td><td>Sumaiya Islam</td><td>৳1,099</td><td>bKash</td><td><span class="tag">PAID</span></td></tr>
-<tr><td>SN-10023</td><td>Rafi Ahmed</td><td>৳899</td><td>SSLCOMMERZ</td><td>Pending</td></tr></table>
+<tr><td>SN-10023</td><td>Rafi Ahmed</td><td>৳899</td><td>SSLCOMMERZ</td><td>Pending</td></tr></table></div>
 </div>
 
 <div id="adminEnrollments" class="card" style="display:none;margin-top:22px">
 <h3>🎓 Enrollment Management</h3>
 <table><tr><th>Student</th><th>Course</th><th>Batch</th><th>Status</th><th>Action</th></tr>
 <tr><td>Arif Hasan</td><td>Class 3 Complete</td><td>C3-A</td><td>Active</td><td><button class="btn">Manage</button></td></tr>
-<tr><td>Rafi Ahmed</td><td>Class 2 Complete</td><td>C2-B</td><td>Pending</td><td><button class="btn primary" onclick="alert('Enrollment activated')">Activate</button></td></tr></table>
+<tr><td>Rafi Ahmed</td><td>Class 2 Complete</td><td>C2-B</td><td>Pending</td><td><button class="btn primary" onclick="alert('Enrollment activated')">Activate</button></td></tr></table></div>
 </div>
 
 <div id="adminContent" class="card" style="display:none;margin-top:22px">
@@ -180,18 +218,18 @@ footer{padding:35px 0;background:#171b2a;color:#fff;margin-top:40px}
 <button class="btn primary" onclick="adminAdd('lesson')">+ Add Lesson</button>
 <button class="btn" onclick="adminAdd('homework')">+ Add Homework</button>
 <button class="btn" onclick="adminAdd('video')">+ Add Video</button>
-<table style="margin-top:14px"><tr><th>Course</th><th>Chapter</th><th>Lesson</th><th>Type</th><th>Status</th></tr>
+<div class="admin-table-wrap"><table style="margin-top:14px"><tr><th>Course</th><th>Chapter</th><th>Lesson</th><th>Type</th><th>Status</th></tr>
 <tr><td>Class 3</td><td>Chapter 1</td><td>Numbers</td><td>Video</td><td>Published</td></tr>
-<tr><td>Class 5</td><td>Chapter 2</td><td>Fractions</td><td>Homework</td><td>Published</td></tr></table>
+<tr><td>Class 5</td><td>Chapter 2</td><td>Fractions</td><td>Homework</td><td>Published</td></tr></table></div>
 </div>
 
 <div id="adminExams" class="card" style="display:none;margin-top:22px">
 <h3>🧠 Quiz & Exam Management</h3>
 <button class="btn primary" onclick="adminAdd('quiz')">+ Create Quiz</button>
 <button class="btn" onclick="adminAdd('exam')">+ Create Exam</button>
-<table style="margin-top:14px"><tr><th>Assessment</th><th>Class</th><th>Questions</th><th>Status</th></tr>
+<div class="admin-table-wrap"><table style="margin-top:14px"><tr><th>Assessment</th><th>Class</th><th>Questions</th><th>Status</th></tr>
 <tr><td>Weekly Math Quiz</td><td>3</td><td>10</td><td>Published</td></tr>
-<tr><td>Monthly Exam</td><td>5</td><td>50</td><td>Scheduled</td></tr></table>
+<tr><td>Monthly Exam</td><td>5</td><td>50</td><td>Scheduled</td></tr></table></div>
 </div>
 
 <div id="adminNotifications" class="card" style="display:none;margin-top:22px">
@@ -215,7 +253,7 @@ footer{padding:35px 0;background:#171b2a;color:#fff;margin-top:40px}
 <table><tr><th>Time</th><th>Admin</th><th>Action</th><th>Module</th></tr>
 <tr><td>10:30 AM</td><td>Super Admin</td><td>Approved Teacher</td><td>Teachers</td></tr>
 <tr><td>10:18 AM</td><td>Admin</td><td>Published Course</td><td>Courses</td></tr>
-<tr><td>09:55 AM</td><td>Super Admin</td><td>Verified Payment</td><td>Payments</td></tr></table>
+<tr><td>09:55 AM</td><td>Super Admin</td><td>Verified Payment</td><td>Payments</td></tr></table></div>
 </div>
 </div></section>
 
@@ -278,6 +316,7 @@ function adminTab(name){
   ids.forEach(id=>{const el=document.getElementById(id); if(el) el.style.display='none';});
   const target=document.getElementById('admin'+name.charAt(0).toUpperCase()+name.slice(1));
   if(target) target.style.display='block';
+  resetAdminSearch();
 }
 function adminAdd(type){
   const labels={student:'Student',parent:'Parent',teacher:'Teacher',course:'Course',lesson:'Lesson',homework:'Homework',video:'Video',quiz:'Quiz',exam:'Exam'};
@@ -290,5 +329,47 @@ function adminAdd(type){
 function teacherApprove(btn){btn.parentElement.parentElement.cells[3].innerHTML='<span class="tag">Approved</span>';btn.parentElement.innerHTML='<button class="btn">View</button>';alert('Teacher approved in demo.');}
 function sendNotice(){const t=document.getElementById('noticeText').value.trim(); if(!t){alert('Write a notification first');return;} alert('Notification sent in demo.');document.getElementById('noticeText').value='';}
 function saveSettings(){const name=document.getElementById('siteName').value; if(name){document.querySelector('.logo').innerText='📚 '+name;document.title=name+' — Online Learning Platform';} alert('Website settings saved in demo. Production versionে database-এ save হবে.');}
+
+function getVisibleAdminTable(){
+  const admin = document.getElementById('admin');
+  if(!admin) return null;
+  const tables = [...admin.querySelectorAll('table')];
+  return tables.find(table => {
+    const parent = table.closest('.card');
+    return parent && getComputedStyle(parent).display !== 'none';
+  }) || null;
+}
+function filterAdminRows(){
+  const input = document.getElementById('adminSearch');
+  const table = getVisibleAdminTable();
+  if(!table) return;
+  const q = (input?.value || '').trim().toLowerCase();
+  [...table.querySelectorAll('tr')].forEach((row, i) => {
+    if(i === 0) { row.style.display = ''; return; }
+    row.style.display = row.innerText.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+function resetAdminSearch(){
+  const input = document.getElementById('adminSearch');
+  if(input) input.value = '';
+  filterAdminRows();
+}
+function exportAdminTable(){
+  const table = getVisibleAdminTable();
+  if(!table){ alert('প্রথমে Admin Panel-এর একটি তালিকা খুলুন।'); return; }
+  const rows = [...table.querySelectorAll('tr')].filter(row => getComputedStyle(row).display !== 'none');
+  const csv = rows.map(row => [...row.querySelectorAll('th,td')].map(cell => {
+    const value = cell.innerText.replace(/\s+/g,' ').trim().replace(/"/g,'""');
+    return `"${value}"`;
+  }).join(',')).join('\r\n');
+  const blob = new Blob(['\ufeff' + csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'shikkhanest-admin-demo.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
+
 </script>
 </body></html>
